@@ -1,0 +1,452 @@
+{
+  "name": "Feedback Email Reply Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1120,
+        368
+      ],
+      "id": "5fe35973-664c-4c3c-8a6d-5121728f2d51",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aAtxpifgvrAqPx6E",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Subject : {{ $json.Subject }}\nEmail : {{ $json.Email }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Review",
+              "description": "If it is a good review or bad review e mail."
+            },
+            {
+              "category": "Other",
+              "description": "If it is not a good review or bad review e mail."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -672,
+        368
+      ],
+      "id": "cd23780e-0617-40b1-ad43-37b700773b63",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Name : {{ $json.Name }}\nFrom : {{ $json.From }}\nTo : {{ $json.To }}\nSubject : {{ $json.Subject }}\nEmail : {{ $json.Email }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Make a reply polite Email\nDon't Write a subject,Don't Make them Long\n\n\nAction : You are an email response agent. You receives the email data from the email trigger.\n\nInstructions: You have given it a detailed set of instructions like Name, From, To, Subject, Body.\n\nAct as an email response agent.\n\n\nAssign a rating from 1 to 5 based on the review.\n\nWrite a short summary of 8 to 12 words.\n\nUse any emojis.\n\nDont Create a subject line for the reply email.\n\nPlease format your entire response as a single, minified JSON object with the following three keys, in this specific order: \"Email\", \"rating\", and \"summary\".\n\nOutput Format Example : {\"Email\":\"Dear Mr. Gupta,\\n\\nThank you for reaching out and bringing your concerns to our attention. I’m truly sorry to hear that your recent experience with our service did not meet the standards you rightfully expect.\\n\\nPlease accept my sincere apologies for any inconvenience this may have caused. Your feedback is very important to us, and we are committed to addressing the issue promptly. To better understand what went wrong and to ensure it does not happen again, could you kindly provide a few more details about the specific problem you encountered? This will help us investigate the matter thoroughly and take corrective action.\\n\\nIn the meantime, I would like to offer the following steps to resolve the situation:\\n\\n1. **Immediate Review:** Our support team will prioritize a review of your case as soon as we receive the additional information.\\n2. **Compensation:** Depending on the outcome of our investigation, we are prepared to offer a suitable compensation or service credit as a gesture of goodwill.\\n3. **Follow‑up:** I will personally follow up with you within 48 hours to update you on our progress and confirm that the issue has been resolved to your satisfaction.\\n\\nYour satisfaction is our top priority, and we value the opportunity to make things right. Please feel free to reply to this email or contact me directly at (555) 123‑4567 if you prefer to discuss the matter over the phone.\\n\\nThank you for your patience and understanding. We look forward to restoring your confidence in our service.\\n\\nWarm regards,\\n\\nAmbar Shah  \\nCustomer Relations Manager  \\n[Company Name]  \\nambarshah6969@gmail.com  \\n(555) 123‑4567\",\"rating\":\"1 to 5 \",summary\":\"xyz\"}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        368
+      ],
+      "id": "a55efe15-c3da-4ea4-b520-eb9ad9838536",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1B2o4pb458f8hqg0dm8iJlkHp-BeMO0Ry0cmDCuXY1O4",
+          "mode": "list",
+          "cachedResultName": "Feedback Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1B2o4pb458f8hqg0dm8iJlkHp-BeMO0Ry0cmDCuXY1O4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SQIRL7OJSQehVVVWokoZcOt2GFjo8ojv4jF9ef0iJoE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "From": "={{ $('Edit Fields1').item.json.From }}",
+            "Subject": "={{ $('Edit Fields1').item.json.Subject }}",
+            "Email": "={{ $('Edit Fields1').item.json.Email }}",
+            "Reply": "={{ $('Edit Fields1').item.json.Reply }}",
+            "Rating": "={{ $('Edit Fields1').item.json.Rating }}",
+            "Summary": "={{ $('Edit Fields1').item.json.Summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "From",
+              "displayName": "From",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reply",
+              "displayName": "Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        464
+      ],
+      "id": "ee14a68e-7b55-47be-ae4e-9708f300086a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SAQvdZt9sdz2o67m",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Email\": \"Dear Mr. Gupta,\\n\\nI’m very sorry to hear about...\",\n  \"Rating\": \"1\",\n  \"Summary\": \"Apology and plan to resolve service issue\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -248,
+        592
+      ],
+      "id": "9f344047-7ca5-4076-87b4-3c2f797705a5",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "emailType": "text",
+        "message": "={{ $json.Reply }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        256,
+        272
+      ],
+      "id": "4ae021ef-7eee-47e7-87bd-f1f522d1264d",
+      "name": "Reply to a message",
+      "webhookId": "006b060d-b20e-41f8-93c6-6225ac0bb70d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aAtxpifgvrAqPx6E",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9b3a34c-6d33-4091-b17e-1220cd2ce3ed",
+              "name": "Name",
+              "value": "={{ $json.From.match(/^(.*?)\\s*</) ? $json.From.match(/^(.*?)\\s*</)[1] : $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "f9935bfb-d0d3-4428-aaf3-1605e68c2297",
+              "name": "From",
+              "value": "= {{ $json.From.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/) ? $json.From.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})/)[1] : $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "02892f76-81d9-418a-bf7f-020e8accf05f",
+              "name": "To",
+              "value": "={{ $json.To }}",
+              "type": "string"
+            },
+            {
+              "id": "4f7ff4f3-410a-4471-9e35-72ddee182ec7",
+              "name": "Subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "77aeb6f9-1815-4175-a7c1-f67ca505ff90",
+              "name": "Email",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        368
+      ],
+      "id": "62d5d228-6d75-41a3-bb43-94ce44449f91",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9919c481-5d86-44e5-ab5d-2a567e020ff5",
+              "name": "Name",
+              "value": "={{ $('Edit Fields').item.json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "076c7bcb-d1ba-4722-a2b0-ca759fdce47d",
+              "name": "From",
+              "value": "={{ $('Edit Fields').item.json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "e312d2e8-dcab-471d-a447-1985652bfa7b",
+              "name": "To",
+              "value": "={{ $('Edit Fields').item.json.To }}",
+              "type": "string"
+            },
+            {
+              "id": "a7f0114a-9b3c-4e45-8d26-953027862552",
+              "name": "Subject",
+              "value": "={{ $('Edit Fields').item.json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "648982cf-ceec-4d88-a45f-0a6a7d343c7b",
+              "name": "Email",
+              "value": "={{ $('Edit Fields').item.json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "2605a4c3-3138-498c-ab39-faa7d2f0042c",
+              "name": "Reply",
+              "value": "={{ $json.output.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "c8e46c2d-9b37-425f-b6c4-a5e24f98700d",
+              "name": "Rating",
+              "value": "={{ $json.output.Rating }}",
+              "type": "string"
+            },
+            {
+              "id": "52253316-55f9-42db-acb4-2b8ee32a8fed",
+              "name": "Summary",
+              "value": "={{ $json.output.Summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        368
+      ],
+      "id": "a590b775-d5ce-4a58-8186-87b36ba43975",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        592
+      ],
+      "id": "b411aa9a-fcad-4eaa-9581-643191e1e12e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "4y1JIKIGviQt9UW2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ad5b4be7-5262-454e-9961-ff8871a9bfc4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8f1a8d257a0298b56ef05adb0c01f4d22281487fc6c6185353279b872833a32"
+  },
+  "id": "x3BkAb0hp3khNzVc",
+  "tags": []
+}
