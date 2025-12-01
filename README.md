@@ -76,6 +76,8 @@ If I Had More Time
 - Advanced analytics dashboard - More classification labels
 - Auto-tagging emails in Gmail
 - CRM Integration
+
+  
 --- Conclusion
 This automation transforms a slow, inconsistent feedback handling process into a fully automated AI-powered system.
 By combining n8n, Gmail API, Google Gemini, and Sheets, it enables instant replies, accurate classification, and structured storage—creating a scalable, professional customer feedback system.
