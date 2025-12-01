@@ -78,7 +78,8 @@ If I Had More Time
 - CRM Integration
 
   
---- Conclusion
+Conclusion
+
 This automation transforms a slow, inconsistent feedback handling process into a fully automated AI-powered system.
 By combining n8n, Gmail API, Google Gemini, and Sheets, it enables instant replies, accurate classification, and structured storage—creating a scalable, professional customer feedback system.
 
